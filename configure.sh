@@ -2,7 +2,7 @@
 
 CASSANDRA_HOME=/opt/cassandra
 CASSANDRA_HOST="$(hostname --ip-address)"
-CLUSTER_NAME="senzchain"
+CLUSTER_NAME="cluster"
 WRITE_TIME_OUT=20000
 
 sed -ri 's/^(# )?('"cluster_name"':).*/\2 '"$CLUSTER_NAME"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
