@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 CASSANDRA_VERSION=cassandra:3.11.6
-IMAGE_VERSION=manual-1
+IMAGE_VERSION=manual-2
 
 docker rmi cassandra:$CASSANDRA_VERSION
 
