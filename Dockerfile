@@ -1,11 +1,10 @@
-FROM cassandra:3.11.6
+ARG cassandra_version
 
-ARG date
+FROM $cassandra_version
 
 LABEL company="Pharos Production Inc."
 
 ENV LANG=C.UTF-8 \
-  REFRESHED_AT="$date" \
   TERM=xterm \
   DEBIAN_FRONTEND=noninteractive
 
