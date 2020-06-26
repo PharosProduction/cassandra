@@ -21,7 +21,7 @@ sed -ri 's/^(# )?('"broadcast_rpc_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSA
 
 # config cassandra seeds
 if [ -z "$CASSANDRA_SEEDS" ]; then
-	CASSANDRA_SEEDS=$CASSANDRA_HOST
+	CASSANDRA_SEEDS=$CASSANDRA_SEEDS
 fi
 
 sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_HOME/conf/cassandra.yaml"
@@ -37,7 +37,7 @@ sed -ri 's/^(# )?('"broadcast_rpc_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSA
 
 # config cassandra seeds
 if [ -z "$CASSANDRA_SEEDS" ]; then
-	CASSANDRA_SEEDS=$CASSANDRA_HOST
+	CASSANDRA_SEEDS=$CASSANDRA_SEEDS
 fi
 
 sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_ETC/cassandra.yaml"
