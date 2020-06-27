@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+sleep 5
+
 ISTIO_LOCALHOST=127.0.0.1
 CASSANDRA_HOST="$(hostname --ip-address)"
 CLUSTER_NAME="cluster"
