@@ -10,6 +10,11 @@ ENV LANG=C.UTF-8 \
 
 ENV LUCENE_PLUGIN_VER=3.11.3.0
 
+RUN apt-get update && \
+  apt-get upgrade -y && \
+  apt-get install -y \
+    dnsutils
+
 RUN curl -LO http://search.maven.org/remotecontent\?filepath\=com/stratio/cassandra/cassandra-lucene-index-plugin/${LUCENE_PLUGIN_VER}/cassandra-lucene-index-plugin-${LUCENE_PLUGIN_VER}.jar
 RUN mv cassandra-lucene-index-plugin-${LUCENE_PLUGIN_VER}.jar /opt/cassandra/lib
 
