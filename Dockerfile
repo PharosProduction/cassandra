@@ -20,6 +20,10 @@ RUN mv cassandra-lucene-index-plugin-${LUCENE_PLUGIN_VER}.jar /opt/cassandra/lib
 
 COPY configure.sh /opt/cassandra
 RUN chmod +x /opt/cassandra/configure.sh
+
+COPY ready-probe.sh /opt/cassandra
+RUN chmod +x /opt/cassandra/ready-probe.sh
+
 RUN chown -R cassandra:cassandra /opt/cassandra
 
 USER cassandra
