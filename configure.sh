@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+swapoff -a
+
 # # first arg is `-f` or `--some-option` or there are no args
 # if [ "$#" -eq 0 ] || [ "${1#-}" != "$1" ]; then
 #   set -- cassandra -f "$@"
@@ -103,7 +105,7 @@ set -e
 
   # prefer_local=true
 
-  # CASSANDRA_HOME=/opt/cassandra
+  CASSANDRA_HOME=/opt/cassandra
 
   # sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 
@@ -142,7 +144,7 @@ echo "AAAA CASSANDRA HOST: ${CASSANDRA_HOST}"
 # WRITE_TIME_OUT=20000
 POD_ORDINAL="${POD_NAME##*-}"
 echo "AAAA ORDINAL: ${POD_ORDINAL}"
-POD_BROADCAST="10.43.50.1$POD_ORDINAL"
+POD_BROADCAST="$POD_NAME.cassandra-cql-$POD_ORDINAL.cassandra-ns.svc.cluster.local" # "10.43.50.1$POD_ORDINAL"
 echo "AAAA POD_BROADCAST: ${POD_BROADCAST}"
 
 ##########################################################################################################################
@@ -160,11 +162,11 @@ fi
 
 ##########################################################################################################################
 
-# sed -ri 's/^(# )?('"listen_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
-# sed -ri 's/^(# )?('"rpc_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
-# sed -ri 's/^(# )?('"broadcast_address"':).*/\2 '"$POD_BROADCAST"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
-# sed -ri 's/^(# )?('"broadcast_rpc_address"':).*/\2 '"$POD_BROADCAST"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
-# sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_HOME/conf/cassandra.yaml"
+sed -ri 's/^(# )?('"listen_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
+sed -ri 's/^(# )?('"rpc_address"':).*/\2 '"0.0.0.0"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
+sed -ri 's/^(# )?('"broadcast_address"':).*/\2 '"$POD_BROADCAST"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
+sed -ri 's/^(# )?('"broadcast_rpc_address"':).*/\2 '"0.0.0.0"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
+sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 
 # sed -ri 's/^(# )?('"endpoint_snitch"':).*/\2 '"GossipingPropertyFileSnitch"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 # sed -ri 's/^(# )?('"commitlog_total_space_in_mb"':).*/\2 '"4139"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
@@ -174,7 +176,7 @@ fi
 # sed -ri 's/^(# )?('"enable_sasi_indexes"':).*/\2 '"true"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 # sed -ri 's/^(# )?('"enable_transient_replication"':).*/\2 '"true"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 
-# rm "$CASSANDRA_HOME/conf/cassandra-topology.properties"
+rm "$CASSANDRA_HOME/conf/cassandra-topology.properties"
 
 # sed -ri 's/^[# ]*('"prefer_local"'=).*/\1'"true"'/' "$CASSANDRA_HOME/conf/cassandra-rackdc.properties"
 
@@ -189,15 +191,13 @@ fi
 
 ##########################################################################################################################
 
-swapoff -a
+# CASSANDRA_ETC=/etc/cassandra
 
-CASSANDRA_ETC=/etc/cassandra
-
-sed -ri 's/^(# )?('"listen_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_ETC/cassandra.yaml"
-sed -ri 's/^(# )?('"rpc_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_ETC/cassandra.yaml"
-sed -ri 's/^(# )?('"broadcast_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_ETC/cassandra.yaml"
-sed -ri 's/^(# )?('"broadcast_rpc_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_ETC/cassandra.yaml"
-sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_ETC/cassandra.yaml"
+# sed -ri 's/^(# )?('"listen_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_ETC/cassandra.yaml"
+# sed -ri 's/^(# )?('"rpc_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_ETC/cassandra.yaml"
+# sed -ri 's/^(# )?('"broadcast_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_ETC/cassandra.yaml"
+# sed -ri 's/^(# )?('"broadcast_rpc_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_ETC/cassandra.yaml"
+# sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_ETC/cassandra.yaml"
 
 # sed -ri 's/^(# )?('"endpoint_snitch"':).*/\2 '"GossipingPropertyFileSnitch"'/' "$CASSANDRA_ETC/cassandra.yaml"
 # sed -ri 's/^(# )?('"commitlog_total_space_in_mb"':).*/\2 '"4139"'/' "$CASSANDRA_ETC/cassandra.yaml"
