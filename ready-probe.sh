@@ -1,4 +1,8 @@
-if [[ $(nodetool status | grep $POD_IP) == *"UN"* ]]; then
+#!/bin/bash
+
+HOST_ID=$(nodetool info | sed -rn 's/ID.*: ([a-zA-Z0-9-]+)/\1/p')
+
+if [[ $(nodetool status | grep $HOST_ID) == *"UN"* ]]; then
   if [[ $DEBUG ]]; then
     echo "UN";
   fi
