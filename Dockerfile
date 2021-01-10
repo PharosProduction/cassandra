@@ -19,6 +19,8 @@ RUN apt-get update && \
 
 COPY limits.conf /etc/security/limits.conf
 COPY sysctl.conf /etc/sysctl.conf
+RUN ulimit -n 65536 && \
+  ulimit unlimited
 
 RUN curl -LO http://search.maven.org/remotecontent\?filepath\=com/stratio/cassandra/cassandra-lucene-index-plugin/${LUCENE_PLUGIN_VER}/cassandra-lucene-index-plugin-${LUCENE_PLUGIN_VER}.jar
 RUN mv cassandra-lucene-index-plugin-${LUCENE_PLUGIN_VER}.jar /opt/cassandra/lib
@@ -37,4 +39,4 @@ WORKDIR /opt/cassandra
 EXPOSE 7000 7001 7199 9042 9160
 
 ENTRYPOINT ["/opt/cassandra/configure.sh"]
-CMD ["/opt/cassandra/bin/cassandra", "-f", "-Dcassandra.config=file:///opt/cassandra/conf/cassandra.conf"]
+CMD ["/opt/cassandra/bin/cassandra", "-f", "-Dcassandra.config=file:///opt/cassandra/conf/cassandra.yaml"]

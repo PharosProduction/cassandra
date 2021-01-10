@@ -2,6 +2,8 @@
 set -e
 
 swapoff -a
+ulimit -n 65536
+ulimit -u unlimited
 
 # # first arg is `-f` or `--some-option` or there are no args
 # if [ "$#" -eq 0 ] || [ "${1#-}" != "$1" ]; then
@@ -107,6 +109,9 @@ swapoff -a
 
   CASSANDRA_HOME=/opt/cassandra
 
+  cp -f "$TEMP_CASSANDRA_CONFIG_PATH/cassandra.yaml" "$CASSANDRA_HOME/conf/"
+  cp -f "$TEMP_CASSANDRA_CONFIG_PATH/cassandra-rackdc.properties" "$CASSANDRA_HOME/conf/"
+
   # sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 
   # for yaml in \
@@ -128,24 +133,28 @@ swapoff -a
 
   # sed -ri 's/^[# ]*('"prefer_local"'=).*/\1 '"true"'/' "$CASSANDRA_HOME/conf/cassandra-rackdc.properties"
 
-  # for rackdc in dc rack prefer_local; do
-  #   var="CASSANDRA_${rackdc^^}"
-  #   val="${!var}"
-  #   if [ "$val" ]; then
-  #     sed -ri 's/^[# ]*('"$rackdc"'=).*/\1 '"$val"'/' "$CASSANDRA_HOME/conf/cassandra-rackdc.properties"
-  #   fi
-  # done
+  for rackdc in dc rack prefer_local; do
+    var="CASSANDRA_${rackdc^^}"
+    val="${!var}"
+    if [ "$val" ]; then
+      sed -ri 's/^[# ]*('"$rackdc"'=).*/\1 '"$val"'/' "$CASSANDRA_HOME/conf/cassandra-rackdc.properties"
+    fi
+  done
 
 # fi
 
 CASSANDRA_HOST="$(hostname --ip-address)"
+HOSTNAME=$(hostname -f)
 echo "AAAA CASSANDRA HOST: ${CASSANDRA_HOST}"
+echo "AAAA HOSTNAME: ${CASSANDRA_HOST}"
 # CLUSTER_NAME="cluster"
 # WRITE_TIME_OUT=20000
 POD_ORDINAL="${POD_NAME##*-}"
 echo "AAAA ORDINAL: ${POD_ORDINAL}"
-POD_BROADCAST="$POD_NAME.cassandra-cql-$POD_ORDINAL.cassandra-ns.svc.cluster.local" # "10.43.50.1$POD_ORDINAL"
+# POD_BROADCAST="10.43.50.1$POD_ORDINAL"
+POD_BROADCAST="10.96.171.1$POD_ORDINAL"
 echo "AAAA POD_BROADCAST: ${POD_BROADCAST}"
+echo "BBBB: ${POD_IP:-$HOSTNAME}"
 
 ##########################################################################################################################
 
@@ -165,8 +174,10 @@ fi
 sed -ri 's/^(# )?('"listen_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 sed -ri 's/^(# )?('"rpc_address"':).*/\2 '"0.0.0.0"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 sed -ri 's/^(# )?('"broadcast_address"':).*/\2 '"$POD_BROADCAST"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
-sed -ri 's/^(# )?('"broadcast_rpc_address"':).*/\2 '"0.0.0.0"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
+sed -ri 's/^(# )?('"broadcast_rpc_address"':).*/\2 '"$POD_BROADCAST"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_HOME/conf/cassandra.yaml"
+
+# sed -ri 's/^(# )?('"listen_on_broadcast_address"':).*/\2 '"true"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 
 # sed -ri 's/^(# )?('"endpoint_snitch"':).*/\2 '"GossipingPropertyFileSnitch"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 # sed -ri 's/^(# )?('"commitlog_total_space_in_mb"':).*/\2 '"4139"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
@@ -176,7 +187,7 @@ sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_HOME/conf/cassan
 # sed -ri 's/^(# )?('"enable_sasi_indexes"':).*/\2 '"true"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 # sed -ri 's/^(# )?('"enable_transient_replication"':).*/\2 '"true"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 
-rm "$CASSANDRA_HOME/conf/cassandra-topology.properties"
+rm "$CASSANDRA_HOME/conf/cassandra-topology.properties" || true
 
 # sed -ri 's/^[# ]*('"prefer_local"'=).*/\1'"true"'/' "$CASSANDRA_HOME/conf/cassandra-rackdc.properties"
 
