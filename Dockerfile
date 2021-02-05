@@ -33,8 +33,11 @@ RUN chmod +x /opt/cassandra/ready-probe.sh
 
 RUN chown -R cassandra:cassandra /opt/cassandra
 
-RUN mkdir -p /opt/cassandra/data/data/system_schema
-RUN chown -R cassandra:cassandra /opt/cassandra/data/
+RUN mkdir -p /opt/cassandra/data/data/ && \
+  chown -R cassandra:cassandra /opt/cassandra/data/data/
+
+RUN mkdir -p /opt/cassandra/data/data/system_schema/ && \
+  chown -R cassandra:cassandra /opt/cassandra/data/data/system_schema/
 
 USER cassandra
 WORKDIR /opt/cassandra
