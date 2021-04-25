@@ -153,8 +153,8 @@ POD_ORDINAL="${POD_NAME##*-}"
 echo "AAAA ORDINAL: ${POD_ORDINAL}"
 # POD_BROADCAST="10.43.50.1$POD_ORDINAL"
 POD_BROADCAST="10.96.171.1$POD_ORDINAL"
-echo "AAAA POD_BROADCAST: ${POD_BROADCAST}"
-echo "BBBB: ${POD_IP:-$HOSTNAME}"
+echo "POD_BROADCAST: ${POD_BROADCAST}"
+echo "POD_NAME: ${POD_IP:-$HOSTNAME}"
 
 ##########################################################################################################################
 
